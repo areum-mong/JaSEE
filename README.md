@@ -43,11 +43,11 @@
   </tr>
   <tr align="center">
     <td>
-      <a href="document/스트림릿시연영상.mp4">
+      <a href="document/세미2 공모전 시연영상.mp4">
         <img src="https://img.shields.io/badge/DEMO%20VIDEO-PLAY-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Demo Video">
       </a>
       <br>
-      <a href="document/스트림릿시연영상.mp4">[시연 영상 재생 및 다운로드]</a>
+      <a href="document/세미2 공모전 시연영상.mp4">[시연 영상 재생 및 다운로드]</a>
     </td>
     <td>
       <a href="document/JASSE(자세히봐)_발표자료.pptx">
