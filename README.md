@@ -18,7 +18,7 @@
 
 ## 🛠️ Tech Stack (기술 스택)
 
-<p align="left">
+<p align="center">
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit">
   <img src="https://img.shields.io/badge/YOLOv8-4EAA25?style=for-the-badge&logo=ultralytics&logoColor=white" alt="YOLOv8">
@@ -34,11 +34,30 @@
 
 ## 🎬 프로젝트 시연 및 발표 자료 (Demo & Presentation)
 
-이 프로젝트의 실제 구동 영상과 기획/아키텍처에 대한 발표 자료를 아래 링크를 통해 직접 확인하실 수 있습니다.
+<p align="center">이 프로젝트의 실제 구동 영상과 기획/아키텍처에 대한 발표 자료를 아래 링크를 통해 직접 확인하실 수 있습니다.</p>
 
-| 🎥 서비스 시연 영상 (Streamlit) | 📊 프로젝트 발표 자료 (PPT) |
-| :---: | :---: |
-| <a href="document/스트림릿시연영상.mp4"><img src="https://img.shields.io/badge/DEMO%20VIDEO-PLAY-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Demo Video"></a><br>[시연 영상 재생 및 다운로드] | <a href="document/JASSE(자세히봐)_발표자료.pptx"><img src="https://img.shields.io/badge/PRESENTATION-PPT_DOWNLOAD-0078D7?style=for-the-badge&logo=microsoft-powerpoint&logoColor=white" alt="Presentation"></a><br>[발표 자료 다운로드] |
+<table align="center">
+  <tr align="center">
+    <td><b>🎥 서비스 시연 영상 (Streamlit)</b></td>
+    <td><b>📊 프로젝트 발표 자료 (PPT)</b></td>
+  </tr>
+  <tr align="center">
+    <td>
+      <a href="document/스트림릿시연영상.mp4">
+        <img src="https://img.shields.io/badge/DEMO%20VIDEO-PLAY-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Demo Video">
+      </a>
+      <br>
+      <a href="document/스트림릿시연영상.mp4">[시연 영상 재생 및 다운로드]</a>
+    </td>
+    <td>
+      <a href="document/JASSE(자세히봐)_발표자료.pptx">
+        <img src="https://img.shields.io/badge/PRESENTATION-PPT_DOWNLOAD-0078D7?style=for-the-badge&logo=microsoft-powerpoint&logoColor=white" alt="Presentation">
+      </a>
+      <br>
+      <a href="document/JASSE(자세히봐)_발표자료.pptx">[발표 자료 다운로드]</a>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -125,35 +144,36 @@ graph TD
 
 ---
 
-## 📂 프로젝트 구조
+## 📂 프로젝트 구조 (Project Structure)
 
+### 🌿 디렉토리 트리 개요
 ```
-📁 JASEE/
-├── 📁 Yolo_env/                     # 작업환경 인식 모델 학습 및 처리
-├── 📁 Yolo_pose/                    # 자세 분류 머신러닝/딥러닝 모델 개발
-├── 📁 자세히봐_RAG/                 # RAG 파이프라인 구축을 위한 원천 데이터
-│   ├── 📁 Q&A/                      # 부위별/점수별 Q&A 매핑 데이터
-│   ├── 📁 기능1~3_자료/             # VDT 고시 PDF 및 자세분석기준 DOCX 지침 문서
-│   ├── 📁 기능4_부위별 통증 완화 방법 답변/  # 근골격계 통증 DB 및 질병청 API 테스트
-│   └── 📁 기능5_개인화 맞춤 운동 추천(자세맵핑)/  # UCS/LCS 체형 별 맞춤 운동 추천 DB
-├── 📁 processed_data/               # 전처리된 JSON 청크 데이터 저장 폴더
-├── 📁 vector_db/                    # ChromaDB 벡터 데이터베이스 저장 폴더
-├── 📁 assets/                       # UI 리소스, 스트레칭 애니메이션 및 아이콘
-├── 📁 document/                     # 프로젝트 발표 PPTX 및 시연 영상 MP4
-│
-├── 📄 preprocess_jasee.py           # RAG 데이터 파이프라인 (문서 파싱 및 청크 변환)
-├── 📄 build_vectordb.py             # ChromaDB 구축 및 임베딩 생성
-├── 📄 chatbot.py                    # RAG 인체공학 챗봇 핵심 실행 파일 (CLI / API 연동)
-├── 📄 jasee_core.py                 # 비전 인식 핵심 백엔드 엔진 (YOLO + MLP + 각도 연산)
-│
-├── 📄 app_mobile.py                 # 모바일 레이아웃 최적화 Streamlit 웹앱
-├── 📄 app_desktop.py                # 데스크톱 레이아웃 최적화 Streamlit 웹앱
-├── 📄 app_web.py                    # 모바일/데스크톱 기능 통합 올인원 Streamlit 웹앱
-│
-├── 📄 yolov8n-pose.pt               # YOLOv8 공식 Pose 검출 가중치 파일
-├── 📄 requirements.txt              # 전체 프로젝트 의존성 라이브러리 목록
-└── 📄 logo.png                      # 프로젝트 로고 이미지
+JASEE/
+├── Yolo_env/            # 작업환경(의자/책상/모니터) 탐지 모델 학습 코드
+├── Yolo_pose/           # 실시간 자세 분류(Attention MLP) 모델 학습 코드
+├── 자세히봐_RAG/         # RAG 시스템 구축을 위한 원천 문서 및 DB 자료
+├── processed_data/      # preprocess_jasee.py 실행 후 생성되는 청크 JSON 폴더
+├── vector_db/           # build_vectordb.py 실행 후 생성되는 ChromaDB 폴더
+├── assets/              # UI 아이콘, 피드백 이미지 및 리소스
+├── document/            # 프로젝트 발표 PPTX 및 시연 영상 MP4
+└── *.py (실행 파일)       # Streamlit 웹앱 및 백엔드 실행 스크립트
 ```
+
+### 📋 상세 폴더 및 파일 설명
+| 분류 | 경로명 | 설명 |
+| :--- | :--- | :--- |
+| **핵심 실행 스크립트** | [app_web.py](app_web.py) | 모바일/데스크톱 뷰를 통합 제공하는 Streamlit 올인원 웹 서비스 실행 파일 |
+| | [jasee_core.py](jasee_core.py) | 비전 연산(YOLOv8-pose + Attention MLP 자세 예측) 및 오버레이 드로잉 엔진 |
+| | [chatbot.py](chatbot.py) | RAG 기반 인체공학 피드백 챗봇 백엔드 스크립트 |
+| **RAG 파이프라인** | [preprocess_jasee.py](preprocess_jasee.py) | VDT 지침서(PDF/DOCX/JSON)를 문단 단위 청크(Chunk)로 분할/전처리하는 파이프라인 |
+| | [build_vectordb.py](build_vectordb.py) | 한국어 임베딩 모델을 적용해 청크를 ChromaDB로 인덱싱하여 벡터 DB 구축 |
+| | `자세히봐_RAG/` | RAG에 주입되는 원천 데이터 (VDT 고시 문서, 부위별 질환/통증 데이터 등) |
+| | `processed_data/` | 전처리 단계를 거쳐 생성된 청크 데이터 JSON 파일들이 저장되는 위치 |
+| | `vector_db/` | 임베딩 인덱스가 저장되는 ChromaDB 데이터베이스 폴더 |
+| **AI 모델 개발** | `Yolo_pose/` | 17개 관절 좌표 기반 자세 이중 분류 모델(ML/DL) 비교 연구 및 Attention MLP 모델 가중치 |
+| | `Yolo_env/` | 모니터/의자/책상 인식 커스텀 YOLOv8n 모델 이미지 증강 및 학습 코드 |
+| **기타 리소스** | `document/` | 스트림릿 시연 동영상 및 발표용 프레젠테이션 PPTX 자료 |
+| | `assets/` | 웹앱 상에 시각화할 동작 피드백 가이드 이미지 및 아이콘 |
 
 ---
 
@@ -193,6 +213,13 @@ python build_vectordb.py
 streamlit run app_web.py
 ```
 
+---
+
+## 👥 팀원 정보 (4팀 — 척추처척추)
+* **개발 기간**: 2026년 5월 ~ 2026년 6월
+* **교육 기관**: 아시아경제교육센터 인공지능 세미 프로젝트
+
+---
 
 ## ⚠️ 면책 조항 (Disclaimer)
 * 본 서비스는 의학적 진단 및 치료를 대체할 수 없습니다.
