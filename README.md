@@ -71,6 +71,9 @@
 
 이 두 모델의 출력을 결합하여 **총 8가지 핵심 VDT/RULA 표준 지표**를 실시간으로 평가하고, 실물 크기 오버레이와 인터랙티브 시각화를 통해 직관적인 피드백을 제시합니다.
 
+<img width="1830" height="882" alt="서비스컨셉" src="https://github.com/user-attachments/assets/f06ca5f6-2f52-4c07-abb1-b705b99a4e1a" />
+
+
 ---
 
 ## ⚙️ 시스템 아키텍처 (System Architecture)
@@ -101,6 +104,9 @@ graph TD
 ---
 
 ## ✨ 핵심 기능 
+
+
+<img width="1801" height="963" alt="아키텍쳐" src="https://github.com/user-attachments/assets/d7c2bc6a-76d9-4165-b1b7-085f52c28a21" />
 
 
 ### 1. 실시간 자세 측정 & 분석 (Step 1)
