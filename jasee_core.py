@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 jasee_core.py  —  자세히봐 핵심 로직 (통합 정제 버전)
-위치: E:\\python\\Jasee\\jasee_core.py
+위치: 저장소 루트/jasee_core.py
 
 포함 내용
   - YOLOv8-pose 17개 키포인트 기반 각도 계산
