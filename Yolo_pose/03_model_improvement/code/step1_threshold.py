@@ -1,15 +1,8 @@
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
-try:
-    import config
-except:
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-    import config
 # ================================================
-# ?�로?�트: ?��? ?�세 분류 모델 개발
-# ?�계: 3?�계 - 모델 ?�능 개선
-# ?�명: Recall ?�상???�한 최적 ?�계�??�색
-# ?�성?? 2026.05.13
+# 프로젝트: 앉은 자세 분류 모델 개발
+# 단계: 3단계 - 모델 성능 개선
+# 설명: Recall 향상을 위한 최적 임계값 탐색
+# 작성일: 2026.05.13
 # ================================================
 import torch
 import torch.nn as nn
@@ -21,6 +14,7 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import recall_score, precision_score, f1_score, roc_auc_score, accuracy_score
+import config
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
@@ -105,9 +99,9 @@ best_th_row = df_sorted.iloc[0]
 best_th = best_th_row['Threshold']
 
 # 5. Output 1: Performance Table
-print("?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
-print("[출력 1] ?�계값별 ?�능??(Attention MLP)")
-print("?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
+print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print("[출력 1] 임계값별 성능표 (Attention MLP)")
+print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 print(df_th.to_string(index=False, formatters={
     'Threshold': '{:.2f}'.format,
     'Recall': '{:.4f}'.format,
@@ -119,16 +113,16 @@ print(df_th.to_string(index=False, formatters={
 
 # 6. Output 2: Selection
 current_05 = df_th[np.isclose(df_th['Threshold'], 0.5)].iloc[0]
-print(f"\n?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
-print(f"[출력 2] 최적 ?�계�??�정 결과")
-print(f"?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
-print(f"[BEST] 최적 ?�계�? {best_th:.2f}")
-print(f"?�능: Recall {best_th_row['Recall']:.4f}, Precision {best_th_row['Precision']:.4f}")
+print(f"\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print(f"[출력 2] 최적 임계값 선정 결과")
+print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print(f"[BEST] 최적 임계값: {best_th:.2f}")
+print(f"성능: Recall {best_th_row['Recall']:.4f}, Precision {best_th_row['Precision']:.4f}")
 
 # Performance change vs 0.5
 rec_diff = (best_th_row['Recall'] - current_05['Recall']) / current_05['Recall'] * 100
 prec_diff = (best_th_row['Precision'] - current_05['Precision']) / current_05['Precision'] * 100
-print(f"0.5 ?��?변?�량: Recall {rec_diff:+.1f}% / Precision {prec_diff:+.1f}%")
+print(f"0.5 대비 변화량: Recall {rec_diff:+.1f}% / Precision {prec_diff:+.1f}%")
 
 # 7. Output 3: Visualization
 plt.figure(figsize=(12, 8))
@@ -148,20 +142,18 @@ plt.tight_layout()
 plt.savefig(os.path.join(results_dir, 'threshold_optimization.png'))
 
 # 8. Output 4: Final Comparison Table
-print(f"\n?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
-print(f"[출력 4] ?�계�?0.5 vs 최적 ({best_th:.2f}) 비교")
-print(f"?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
+print(f"\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print(f"[출력 4] 임계값 0.5 vs 최적 ({best_th:.2f}) 비교")
+print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 comparison = []
 metrics = ['Recall', 'F1-Score', 'AUC', 'Accuracy', 'Precision']
 for m in metrics:
     v_old = current_05[m]
     v_new = best_th_row[m]
     comparison.append({
-        '지??: m,
+        '지표': m,
         '기존(0.5)': f"{v_old:.4f}",
-        '최적 ?�계�?: f"{v_new:.4f}",
-        '변?�량': f"{v_new - v_old:+.4f}"
+        '최적 임계값': f"{v_new:.4f}",
+        '변화량': f"{v_new - v_old:+.4f}"
     })
 print(pd.DataFrame(comparison).to_string(index=False))
-
-

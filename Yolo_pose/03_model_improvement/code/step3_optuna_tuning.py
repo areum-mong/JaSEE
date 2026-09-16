@@ -1,15 +1,8 @@
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
-try:
-    import config
-except:
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-    import config
 # ================================================
-# ?�로?�트: ?��? ?�세 분류 모델 개발
-# ?�계: 3?�계 - 모델 ?�능 개선
-# ?�명: Optuna�??�용???�격??과적???�어 �?최적??
-# ?�성?? 2026.05.13
+# 프로젝트: 앉은 자세 분류 모델 개발
+# 단계: 3단계 - 모델 성능 개선
+# 설명: Optuna를 이용한 엄격한 과적합 제어 및 최적화
+# 작성일: 2026.05.13
 # ================================================
 import torch
 import torch.nn as nn
@@ -25,6 +18,7 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import recall_score, f1_score, roc_auc_score, accuracy_score, precision_score
+import config
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
@@ -207,12 +201,10 @@ tuned = {
     'Train/Val Diff': abs(final_train_acc - final_val_acc)
 }
 
-print("\n?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
-print("?�능 비교??(Strict Diff < 0.05 기�?)")
-print("?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
+print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print("성능 비교표 (Strict Diff < 0.05 기준)")
+print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 comp_rows = []
 for m in baseline.keys():
-    comp_rows.append({'지??: m, '기본(16�?': f"{baseline[m]:.4f}", '?�닝??Strict)': f"{tuned[m]:.4f}", '변?�량': f"{tuned[m]-baseline[m]:+.4f}"})
+    comp_rows.append({'지표': m, '기본(16개)': f"{baseline[m]:.4f}", '튜닝후(Strict)': f"{tuned[m]:.4f}", '변화량': f"{tuned[m]-baseline[m]:+.4f}"})
 print(pd.DataFrame(comp_rows).to_string(index=False))
-
-

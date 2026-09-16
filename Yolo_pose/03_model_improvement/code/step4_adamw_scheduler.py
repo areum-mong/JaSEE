@@ -1,15 +1,8 @@
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
-try:
-    import config
-except:
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-    import config
 # ================================================
-# ?�로?�트: ?��? ?�세 분류 모델 개발
-# ?�계: 3?�계 - 모델 ?�능 개선
-# ?�명: AdamW �?LRScheduler�??�용??최종 모델 ?�제
-# ?�성?? 2026.05.13
+# 프로젝트: 앉은 자세 분류 모델 개발
+# 단계: 3단계 - 모델 성능 개선
+# 설명: AdamW 및 LRScheduler를 이용한 최종 모델 정제
+# 작성일: 2026.05.13
 # ================================================
 import torch
 import torch.nn as nn
@@ -24,6 +17,7 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import recall_score, f1_score, roc_auc_score, accuracy_score, precision_score
+import config
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
@@ -168,14 +162,14 @@ res_step4 = {
 # 6. Comparison Output
 step3_res = {'Recall': 0.9545, 'F1-Score': 0.9318, 'AUC': 0.9852, 'Accuracy': 0.9375, 'Precision': 0.9103, 'Train/Val Diff': 0.0384}
 
-print("\n?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
-print("STEP 4 ?�후 ?�능 비교??)
-print("?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
+print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print("STEP 4 전후 성능 비교표")
+print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 comp_rows = []
 for m in step3_res.keys():
     v_old = step3_res[m]
     v_new = res_step4[m]
-    comp_rows.append({'지??: m, 'STEP 3 결과': f"{v_old:.4f}", 'STEP 4 결과': f"{v_new:.4f}", '변?�량': f"{v_new - v_old:+.4f}"})
+    comp_rows.append({'지표': m, 'STEP 3 결과': f"{v_old:.4f}", 'STEP 4 결과': f"{v_new:.4f}", '변화량': f"{v_new - v_old:+.4f}"})
 print(pd.DataFrame(comp_rows).to_string(index=False))
 
 # 7. Visualization
@@ -198,15 +192,13 @@ plt.savefig(os.path.join(results_dir, 'step4_training_curve.png'))
 
 # 8. Total History Table
 history_rows = [
-    {'?�계': '기본 모델', 'Recall': 0.9273, 'F1': 0.9273, 'AUC': 0.9880, 'Acc': 0.9333, 'Diff': 0.0418},
-    {'?�계': '?�계�?0.40', 'Recall': 0.9636, 'F1': 0.9422, 'AUC': 0.9871, 'Acc': 0.9458, 'Diff': 0.0418},
-    {'?�계': '?�처 16�?, 'Recall': 0.9182, 'F1': 0.9224, 'AUC': 0.9787, 'Acc': 0.9292, 'Diff': 0.0496},
-    {'?�계': 'Optuna ?�닝', 'Recall': 0.9545, 'F1': 0.9318, 'AUC': 0.9852, 'Acc': 0.9375, 'Diff': 0.0384},
-    {'?�계': 'STEP 4 (최종)', 'Recall': res_step4['Recall'], 'F1': res_step4['F1-Score'], 'AUC': res_step4['AUC'], 'Acc': res_step4['Accuracy'], 'Diff': res_step4['Train/Val Diff']}
+    {'단계': '기본 모델', 'Recall': 0.9273, 'F1': 0.9273, 'AUC': 0.9880, 'Acc': 0.9333, 'Diff': 0.0418},
+    {'단계': '임계값 0.40', 'Recall': 0.9636, 'F1': 0.9422, 'AUC': 0.9871, 'Acc': 0.9458, 'Diff': 0.0418},
+    {'단계': '피처 16개', 'Recall': 0.9182, 'F1': 0.9224, 'AUC': 0.9787, 'Acc': 0.9292, 'Diff': 0.0496},
+    {'단계': 'Optuna 튜닝', 'Recall': 0.9545, 'F1': 0.9318, 'AUC': 0.9852, 'Acc': 0.9375, 'Diff': 0.0384},
+    {'단계': 'STEP 4 (최종)', 'Recall': res_step4['Recall'], 'F1': res_step4['F1-Score'], 'AUC': res_step4['AUC'], 'Acc': res_step4['Accuracy'], 'Diff': res_step4['Train/Val Diff']}
 ]
-print("\n?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
-print("?�체 과정 최종 ?�능 비교??)
-print("?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
+print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print("전체 과정 최종 성능 비교표")
+print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 print(pd.DataFrame(history_rows).to_string(index=False))
-
-

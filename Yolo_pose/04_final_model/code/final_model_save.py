@@ -1,19 +1,13 @@
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
-try:
-    import config
-except:
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-    import config
 # ================================================
-# ?�로?�트: ?��? ?�세 분류 모델 개발
-# ?�계: 4?�계 - 최종 모델
-# ?�명: 최종 가중치 �?메�??�이???�합 ?�??
-# ?�성?? 2026.05.13
+# 프로젝트: 앉은 자세 분류 모델 개발
+# 단계: 4단계 - 최종 모델
+# 설명: 최종 가중치 및 메타데이터 통합 저장
+# 작성일: 2026.05.13
 # ================================================
 import torch
 import torch.nn as nn
 import os
+import config
 
 # 1. Paths
 save_path = str(config.RESULTS_DIR / "final_attention_mlp.pt")
@@ -67,7 +61,5 @@ torch.save({
 
 # 5. Output
 file_size = os.path.getsize(save_path) / 1024
-print(f"모델 ?�???�료: {save_path}")
-print(f"모델 ?�일 ?�기: {file_size:.2f} KB")
-
-
+print(f"모델 저장 완료: {save_path}")
+print(f"모델 파일 크기: {file_size:.2f} KB")

@@ -1,15 +1,8 @@
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
-try:
-    import config
-except:
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-    import config
 # ================================================
-# ?�로?�트: ?��? ?�세 분류 모델 개발
-# ?�계: 1?�계 - ?�이???�처�?
-# ?�명: YOLOv8-Pose 고도???�드마크 추출 (좌우 반전 �?방향 ?�정 ?�함)
-# ?�성?? 2026.05.14
+# 프로젝트: 앉은 자세 분류 모델 개발
+# 단계: 1단계 - 데이터 전처리
+# 설명: YOLOv8-Pose 고도화 랜드마크 추출 (좌우 반전 및 방향 판정 포함)
+# 작성일: 2026.05.14
 # ================================================
 from ultralytics import YOLO
 import pandas as pd
@@ -19,7 +12,7 @@ import cv2
 import numpy as np
 
 def extract_landmarks(image_dir, model_path='yolov8n-pose.pt'):
-    print(f"--- Landmark 추출 ?�작: {image_dir} ---")
+    print(f"--- Landmark 추출 시작: {image_dir} ---")
     
     model = YOLO(model_path)
     images = glob.glob(os.path.join(image_dir, "**/*.jpg"), recursive=True) + \
@@ -40,10 +33,10 @@ def extract_landmarks(image_dir, model_path='yolov8n-pose.pt'):
         fname = os.path.basename(img_path)
         image_bgr = cv2.imread(img_path)
         if image_bgr is None:
-            failed_images.append(f"{fname} (?�일 로드 ?�패)")
+            failed_images.append(f"{fname} (파일 로드 실패)")
             continue
 
-        # 1�?추론 (방향 �?반전 ?��? ?�단??
+        # 1차 추론 (방향 및 반전 여부 판단용)
         image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
         results = model(image_rgb, verbose=False)
         
@@ -54,7 +47,7 @@ def extract_landmarks(image_dir, model_path='yolov8n-pose.pt'):
                 break
         
         if target_res is None:
-            failed_images.append(f"{fname} (?�람 감�? ?�패)")
+            failed_images.append(f"{fname} (사람 감지 실패)")
             continue
 
         conf = target_res.keypoints.conf[0].cpu().numpy()
@@ -62,7 +55,7 @@ def extract_landmarks(image_dir, model_path='yolov8n-pose.pt'):
         right_ear_conf = conf[4]
         
         is_flipped = False
-        # ?�쪽 측면 ?��?지 ?�단 (?�쪽 귀가 ????보일 ??
+        # 왼쪽 측면 이미지 판단 (왼쪽 귀가 더 잘 보일 때)
         if right_ear_conf < left_ear_conf:
             image_bgr = cv2.flip(image_bgr, 1) # 좌우 반전
             image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
@@ -75,25 +68,25 @@ def extract_landmarks(image_dir, model_path='yolov8n-pose.pt'):
                     break
             
             if target_res is None:
-                failed_images.append(f"{fname} (반전 ??감�? ?�패)")
+                failed_images.append(f"{fname} (반전 후 감지 실패)")
                 continue
             
             conf = target_res.keypoints.conf[0].cpu().numpy()
             is_flipped = True
             flip_count += 1
 
-        # 관??좌표 �??�뢰??추출
+        # 관절 좌표 및 신뢰도 추출
         kpts = target_res.keypoints.xyn[0].cpu().numpy()
         
         l_sh_conf = conf[5]
         r_sh_conf = conf[6]
         
-        # 감�? ?�패 처리 (?�깨 ?�뢰??기�?)
+        # 감지 실패 처리 (어깨 신뢰도 기준)
         if l_sh_conf < 0.5 or r_sh_conf < 0.5:
-            failed_images.append(f"{fname} (?�깨 ?�뢰????��: L={l_sh_conf:.2f}, R={r_sh_conf:.2f})")
+            failed_images.append(f"{fname} (어깨 신뢰도 낮음: L={l_sh_conf:.2f}, R={r_sh_conf:.2f})")
             continue
 
-        # ?��? 방향 ?�정
+        # 앉은 방향 판정
         nose_x = kpts[0][0]
         l_sh_x = kpts[5][0]
         r_sh_x = kpts[6][0]
@@ -101,7 +94,7 @@ def extract_landmarks(image_dir, model_path='yolov8n-pose.pt'):
         
         sitting_direction = "LEFT" if nose_x < shoulder_center_x else "RIGHT"
 
-        # 결과 ?�??
+        # 결과 저장
         row = {
             'filename': fname,
             'sitting_direction': sitting_direction,
@@ -115,28 +108,27 @@ def extract_landmarks(image_dir, model_path='yolov8n-pose.pt'):
             
         results_list.append(row)
 
-    # CSV ?�??
+    # CSV 저장
     df = pd.DataFrame(results_list)
     output_csv = 'yolo_landmarks_extracted.csv'
     df.to_csv(output_csv, index=False)
     
-    # ?�패 목록 ?�??
+    # 실패 목록 저장
     with open('failed_images.txt', 'w', encoding='utf-8') as f:
         f.write("\n".join(failed_images))
 
     # 콘솔 출력
-    print(f"?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
-    print(f" ?�체 ?��?지: {len(images)}??)
-    print(f" 추출 ?�공: {len(results_list)}??)
-    print(f" 감�? ?�패: {len(failed_images)}??)
+    print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(f" 전체 이미지: {len(images)}장")
+    print(f" 추출 성공: {len(results_list)}장")
+    print(f" 감지 실패: {len(failed_images)}장")
     if failed_images:
-        print(f" [?�패 목록]")
+        print(f" [실패 목록]")
         for f in failed_images:
             print(f"  - {f}")
-    print(f" ?�쪽 측면 반전 처리: {flip_count}??)
-    print(f"?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
-    print(f" 결과가 '{output_csv}' �?'failed_images.txt'???�?�되?�습?�다.")
+    print(f" 왼쪽 측면 반전 처리: {flip_count}장")
+    print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(f" 결과가 '{output_csv}' 및 'failed_images.txt'에 저장되었습니다.")
 
-# ?�행 ?�시 (?�요 ??주석 ?�제)
+# 실행 예시 (필요 시 주석 해제)
 # extract_landmarks(str(config.DATA_DIR / "images"))
-
