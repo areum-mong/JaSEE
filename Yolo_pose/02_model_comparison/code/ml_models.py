@@ -1,8 +1,15 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+try:
+    import config
+except:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+    import config
 # ================================================
-# 프로젝트: 앉은 자세 분류 모델 개발
-# 단계: 2단계 - 모델 비교 실험
-# 설명: 4종의 머신러닝 모델 성능 비교 및 평가
-# 작성일: 2026.05.13
+# ?�로?�트: ?��? ?�세 분류 모델 개발
+# ?�계: 2?�계 - 모델 비교 ?�험
+# ?�명: 4종의 머신?�닝 모델 ?�능 비교 �??��?
+# ?�성?? 2026.05.13
 # ================================================
 import pandas as pd
 import numpy as np
@@ -18,8 +25,8 @@ from xgboost import XGBClassifier
 from sklearn.metrics import recall_score, f1_score, roc_auc_score, accuracy_score, precision_score
 
 # 1. Load Data
-data_dir = r'D:\antigravity\semi2_contest\model_data'
-results_dir = r'D:\antigravity\semi2_contest\model_results'
+data_dir = str(config.DATA_DIR)
+results_dir = str(config.RESULTS_DIR)
 os.makedirs(results_dir, exist_ok=True)
 
 df_labels = pd.read_csv(os.path.join(data_dir, 'final_labels_confirmed_merged.csv'))
@@ -45,8 +52,8 @@ y = df['label']
 X_train_val, X_test, y_train_val, y_test = train_test_split(X_raw, y, test_size=0.20, random_state=42, stratify=y)
 
 print(f"Data Split Status:")
-print(f"- Train: {len(X_train_val)}장")
-print(f"- Test: {len(X_test)}장")
+print(f"- Train: {len(X_train_val)}??)
+print(f"- Test: {len(X_test)}??)
 
 # 3. Scaling
 scaler = StandardScaler()
@@ -91,11 +98,11 @@ df_results = df_results.sort_values(by='Recall', ascending=False)
 # 6. Output
 def highlight_max(s):
     is_max = s == s.max()
-    return ['★ ' + f'{v:.4f}' if m else f'{v:.4f}' for v, m in zip(s, is_max)]
+    return ['??' + f'{v:.4f}' if m else f'{v:.4f}' for v, m in zip(s, is_max)]
 
-print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-print("STEP 1. 머신러닝 모델 성능 결과 (Test Set 기준)")
-print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print("\n?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
+print("STEP 1. 머신?�닝 모델 ?�능 결과 (Test Set 기�?)")
+print("?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
 df_print = df_results.copy()
 for col in ['Recall', 'F1-Score', 'AUC', 'Accuracy', 'Precision']:
     df_print[col] = highlight_max(df_results[col])
@@ -112,4 +119,6 @@ plt.ylim(0, 1.1)
 plt.tight_layout()
 plt.savefig(os.path.join(results_dir, 'ml_comparison.png'))
 
-print(f"\n최종 추천 모델: {df_results.iloc[0]['Model']} (Recall 1순위 기준)")
+print(f"\n최종 추천 모델: {df_results.iloc[0]['Model']} (Recall 1?�위 기�?)")
+
+

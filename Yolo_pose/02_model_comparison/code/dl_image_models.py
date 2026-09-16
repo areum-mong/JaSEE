@@ -1,8 +1,15 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+try:
+    import config
+except:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+    import config
 # ================================================
-# 프로젝트: 앉은 자세 분류 모델 개발
-# 단계: 2단계 - 모델 비교 실험
-# 설명: 이미지 기반 전이학습 모델 성능 비교
-# 작성일: 2026.05.13
+# ?�로?�트: ?��? ?�세 분류 모델 개발
+# ?�계: 2?�계 - 모델 비교 ?�험
+# ?�명: ?��?지 기반 ?�이?�습 모델 ?�능 비교
+# ?�성?? 2026.05.13
 # ================================================
 import os
 import torch
@@ -20,8 +27,8 @@ from sklearn.metrics import recall_score, f1_score, roc_auc_score, accuracy_scor
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 # 1. Config
-data_dir = r'D:\antigravity\semi2_contest\model_data\images'
-results_dir = r'D:\antigravity\semi2_contest\model_results'
+data_dir = str(config.DATA_DIR / "images")
+results_dir = str(config.RESULTS_DIR)
 batch_size = 16
 epochs = 30
 lr = 0.0001
@@ -41,7 +48,7 @@ train_val_labels = [full_dataset.targets[i] for i in train_val_idx]
 train_idx, val_idx = train_test_split(train_val_idx, test_size=0.20, random_state=42, stratify=train_val_labels)
 
 print(f"Data Split Status:")
-print(f"- Train: {len(train_idx)}장 | Val: {len(val_idx)}장 | Test: {len(test_idx)}장")
+print(f"- Train: {len(train_idx)}??| Val: {len(val_idx)}??| Test: {len(test_idx)}??)
 
 # 3. Transforms
 transform_train = transforms.Compose([
@@ -193,9 +200,9 @@ for name in model_names:
 df_img = pd.DataFrame(img_results).sort_values(by='Recall', ascending=False)
 df_img.to_csv(os.path.join(results_dir, 'dl_image_results.csv'), index=False)
 
-print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-print("STEP 3. 이미지 기반 딥러닝 모델 성능 결과 (Test Set 기준)")
-print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print("\n?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
+print("STEP 3. ?��?지 기반 ?�러??모델 ?�능 결과 (Test Set 기�?)")
+print("?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
 print(df_img.to_string(index=False))
 
 # Visualization
@@ -210,3 +217,5 @@ for name, hist in histories.items():
 axes[1].legend()
 plt.tight_layout()
 plt.savefig(os.path.join(results_dir, 'dl_image_comparison.png'))
+
+

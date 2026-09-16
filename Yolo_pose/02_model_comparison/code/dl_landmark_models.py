@@ -1,8 +1,15 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+try:
+    import config
+except:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+    import config
 # ================================================
-# 프로젝트: 앉은 자세 분류 모델 개발
-# 단계: 2단계 - 모델 비교 실험
-# 설명: 좌표 기반 딥러닝 모델(MLP, Attention, CNN) 비교
-# 작성일: 2026.05.13
+# ?�로?�트: ?��? ?�세 분류 모델 개발
+# ?�계: 2?�계 - 모델 비교 ?�험
+# ?�명: 좌표 기반 ?�러??모델(MLP, Attention, CNN) 비교
+# ?�성?? 2026.05.13
 # ================================================
 import pandas as pd
 import numpy as np
@@ -20,8 +27,8 @@ from sklearn.metrics import recall_score, f1_score, roc_auc_score, accuracy_scor
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 # 1. Load Data
-data_dir = r'D:\antigravity\semi2_contest\model_data'
-results_dir = r'D:\antigravity\semi2_contest\model_results'
+data_dir = str(config.DATA_DIR)
+results_dir = str(config.RESULTS_DIR)
 
 df_labels = pd.read_csv(os.path.join(data_dir, 'final_labels_confirmed_merged.csv'))
 df_landmarks = pd.read_csv(os.path.join(data_dir, 'yolo_landmarks_clean_merged.csv'))
@@ -46,7 +53,7 @@ X_train_val, X_test, y_train_val, y_test = train_test_split(X_raw, y, test_size=
 X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=0.20, random_state=42, stratify=y_train_val)
 
 print(f"Data Split Status:")
-print(f"- Train: {len(X_train)}장 | Val: {len(X_val)}장 | Test: {len(X_test)}장")
+print(f"- Train: {len(X_train)}??| Val: {len(X_val)}??| Test: {len(X_test)}??)
 
 # 3. Scaling
 scaler = StandardScaler()
@@ -194,14 +201,14 @@ for name, model in model_list.items():
 df_dl = pd.DataFrame(dl_results).sort_values(by='Recall', ascending=False)
 
 # 7. Output
-print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-print("STEP 2. 딥러닝(좌표) 모델 성능 결과 (Test Set 기준)")
-print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print("\n?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
+print("STEP 2. ?�러??좌표) 모델 ?�능 결과 (Test Set 기�?)")
+print("?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
 cols = ['Recall', 'F1-Score', 'AUC', 'Accuracy', 'Precision', 'Train/Val Diff']
 df_print = df_dl.copy()
 for col in cols:
     is_max = df_dl[col] == df_dl[col].max()
-    df_print[col] = ['★ ' + f'{v:.4f}' if m else f'{v:.4f}' for v, m in zip(df_dl[col], is_max)]
+    df_print[col] = ['??' + f'{v:.4f}' if m else f'{v:.4f}' for v, m in zip(df_dl[col], is_max)]
 print(df_print.to_string(index=False))
 
 df_dl.to_csv(os.path.join(results_dir, 'dl_landmark_results.csv'), index=False)
@@ -220,3 +227,5 @@ axes[1].set_title('Training Curves (Loss)')
 axes[1].legend()
 plt.tight_layout()
 plt.savefig(os.path.join(results_dir, 'dl_landmark_comparison.png'))
+
+

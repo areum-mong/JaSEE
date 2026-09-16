@@ -1,16 +1,23 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+try:
+    import config
+except:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+    import config
 # ================================================
-# 프로젝트: 앉은 자세 분류 모델 개발
-# 단계: 1단계 - 데이터 전처리
-# 설명: CSV 파일 병합 및 GOOD/BAD 라벨링 수행
-# 작성일: 2026.05.13
+# ?�로?�트: ?��? ?�세 분류 모델 개발
+# ?�계: 1?�계 - ?�이???�처�?
+# ?�명: CSV ?�일 병합 �?GOOD/BAD ?�벨�??�행
+# ?�성?? 2026.05.13
 # ================================================
 import pandas as pd
 import os
 
 # Paths
-new_path = r'D:\antigravity\semi2_contest\new images_data'
-old_path = r'D:\antigravity\semi2_contest\FOR_DA\FOR_DA'
-output_path = r'D:\antigravity\semi2_contest'
+new_path = str(config.DATA_DIR / "new_images_data")
+old_path = str(config.DATA_DIR / "FOR_DA")
+output_path = str(config.ROOT_DIR)
 
 def merge_csv(filename):
     new_file = os.path.join(new_path, filename)
@@ -65,11 +72,13 @@ if result_labels:
         good_pct = (good_count / n_total) * 100 if n_total > 0 else 0
         bad_pct = (bad_count / n_total) * 100 if n_total > 0 else 0
         
-        print(f"신규 데이터: {n_new}장")
-        print(f"기존 데이터: {n_old}장")
-        print(f"중복 제거: {n_dup}장")
-        print(f"최종 합계: {n_total}장")
-        print(f"GOOD: {good_count}장 ({good_pct:.1f}%)")
-        print(f"BAD: {bad_count}장 ({bad_pct:.1f}%)")
+        print(f"?�규 ?�이?? {n_new}??)
+        print(f"기존 ?�이?? {n_old}??)
+        print(f"중복 ?�거: {n_dup}??)
+        print(f"최종 ?�계: {n_total}??)
+        print(f"GOOD: {good_count}??({good_pct:.1f}%)")
+        print(f"BAD: {bad_count}??({bad_pct:.1f}%)")
     else:
         print("Error: 'final_label' column not found in merged data.")
+
+

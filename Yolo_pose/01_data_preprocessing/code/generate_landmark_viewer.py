@@ -1,3 +1,10 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+try:
+    import config
+except:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+    import config
 import os
 import subprocess
 import sys
@@ -5,14 +12,14 @@ import sys
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-# 라이브러리 체크 및 설치
+# ?�이브러�?체크 �??�치
 try:
     import cv2
     import pandas as pd
     import numpy as np
     from tqdm import tqdm
 except ImportError:
-    print("필요한 라이브러리를 설치합니다...")
+    print("?�요???�이브러리�? ?�치?�니??..")
     install("opencv-python")
     install("pandas")
     install("numpy")
@@ -25,25 +32,25 @@ except ImportError:
 import base64
 
 def generate_viewer(csv_path, image_dirs, output_html):
-    print(f"--- Landmark Viewer 생성 시작 ---")
+    print(f"--- Landmark Viewer ?�성 ?�작 ---")
     
     if not os.path.exists(csv_path):
-        print(f"[오류] CSV 파일을 찾을 수 없습니다: {csv_path}")
+        print(f"[?�류] CSV ?�일??찾을 ???�습?�다: {csv_path}")
         return
 
     df = pd.read_csv(csv_path)
     
-    # 색상 정의 (BGR)
+    # ?�상 ?�의 (BGR)
     COLORS = {
-        'nose': (255, 255, 255),    # 흰색
-        'eye': (235, 206, 135),     # 하늘색
-        'ear': (0, 255, 255),       # 노란색
-        'shoulder': (255, 0, 0),    # 파란색
-        'elbow': (0, 165, 255),     # 주황색
-        'wrist': (203, 192, 255),   # 분홍색
-        'hip': (0, 255, 0),         # 초록색
-        'knee': (128, 0, 128),      # 보라색
-        'ankle': (0, 0, 255)        # 빨간색
+        'nose': (255, 255, 255),    # ?�색
+        'eye': (235, 206, 135),     # ?�늘??
+        'ear': (0, 255, 255),       # ?��???
+        'shoulder': (255, 0, 0),    # ?��???
+        'elbow': (0, 165, 255),     # 주황??
+        'wrist': (203, 192, 255),   # 분홍??
+        'hip': (0, 255, 0),         # 초록??
+        'knee': (128, 0, 128),      # 보라??
+        'ankle': (0, 0, 255)        # 빨간??
     }
 
     CONNECTIONS = [
@@ -75,7 +82,7 @@ def generate_viewer(csv_path, image_dirs, output_html):
     html_cards = []
     stats = {'full': 0, 'partial': 0, 'flipped': 0}
 
-    for _, row in tqdm(df.iterrows(), total=len(df), desc="이미지 처리 중"):
+    for _, row in tqdm(df.iterrows(), total=len(df), desc="?��?지 처리 �?):
         filename = row['filename']
         img_path = None
         for d in image_dirs:
@@ -104,7 +111,7 @@ def generate_viewer(csv_path, image_dirs, output_html):
         h, w = image.shape[:2]
         recognized_count = 0
 
-        # 선 그리기
+        # ??그리�?
         for start_kp, end_kp, color in CONNECTIONS:
             x1, y1 = row[start_kp[0]] * w, row[start_kp[1]] * h
             x2, y2 = row[end_kp[0]] * w, row[end_kp[1]] * h
@@ -114,7 +121,7 @@ def generate_viewer(csv_path, image_dirs, output_html):
             if c1 >= 0.5 and c2 >= 0.5:
                 cv2.line(image, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
 
-        # 점 그리기
+        # ??그리�?
         for kp, type_name in KP_MAP.items():
             x, y = row[f'{kp}_x'] * w, row[f'{kp}_y'] * h
             conf = row[f'{kp}_conf']
@@ -124,36 +131,36 @@ def generate_viewer(csv_path, image_dirs, output_html):
                 cv2.circle(image, (int(x), int(y)), 5, color, -1)
                 recognized_count += 1
             elif conf > 0:
-                # 점선 대신 얇은 원으로 표시
+                # ?�선 ?�???��? ?�으�??�시
                 cv2.circle(image, (int(x), int(y)), 5, color, 1)
 
         if recognized_count == 17: stats['full'] += 1
         else: stats['partial'] += 1
 
-        # 텍스트 오버레이
+        # ?�스???�버?�이
         cv2.putText(image, f"sitting_direction: {row['sitting_direction']}", (10, 30), 
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
         cv2.putText(image, f"is_flipped: {row['is_flipped']}", (10, 60), 
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
-        # Base64 변환
+        # Base64 변??
         _, buffer = cv2.imencode('.jpg', image)
         img_base64 = base64.b64encode(buffer).decode('utf-8')
 
-        # 카드 생성
+        # 카드 ?�성
         card = f"""
         <div class="card" data-dir="{row['sitting_direction']}" data-flipped="{row['is_flipped']}" data-full="{recognized_count == 17}">
             <img src="data:image/jpeg;base64,{img_base64}">
             <div class="info">
                 <div class="filename">{filename}</div>
                 <div>방향: {row['sitting_direction']} | 반전: {row['is_flipped']}</div>
-                <div class="recon">인식 관절: {recognized_count}/17개</div>
+                <div class="recon">?�식 관?? {recognized_count}/17�?/div>
             </div>
         </div>
         """
         html_cards.append(card)
 
-    # HTML 템플릿
+    # HTML ?�플�?
     html_content = f"""
     <!DOCTYPE html>
     <html lang="ko">
@@ -178,18 +185,18 @@ def generate_viewer(csv_path, image_dirs, output_html):
         <h1>Pose Landmark Viewer</h1>
         
         <div class="stats">
-            <div>전체 이미지: <b>{len(df)}장</b></div>
-            <div>17개 완전 인식: <b style="color:#22d3ee">{stats['full']}장</b></div>
-            <div>부분 인식: <b style="color:#f87171">{stats['partial']}장</b></div>
-            <div>반전 처리: <b style="color:#fbbf24">{stats['flipped']}장</b></div>
+            <div>?�체 ?��?지: <b>{len(df)}??/b></div>
+            <div>17�??�전 ?�식: <b style="color:#22d3ee">{stats['full']}??/b></div>
+            <div>부�??�식: <b style="color:#f87171">{stats['partial']}??/b></div>
+            <div>반전 처리: <b style="color:#fbbf24">{stats['flipped']}??/b></div>
         </div>
 
         <div class="filters">
-            <button onclick="filter('all')" class="active">전체 보기</button>
-            <button onclick="filter('LEFT')">LEFT만</button>
-            <button onclick="filter('RIGHT')">RIGHT만</button>
-            <button onclick="filter('flipped')">반전 이미지만</button>
-            <button onclick="filter('partial')">부분인식만</button>
+            <button onclick="filter('all')" class="active">?�체 보기</button>
+            <button onclick="filter('LEFT')">LEFT�?/button>
+            <button onclick="filter('RIGHT')">RIGHT�?/button>
+            <button onclick="filter('flipped')">반전 ?��?지�?/button>
+            <button onclick="filter('partial')">부분인?�만</button>
         </div>
 
         <div class="grid" id="grid">
@@ -220,20 +227,22 @@ def generate_viewer(csv_path, image_dirs, output_html):
     with open(output_html, 'w', encoding='utf-8') as f:
         f.write(html_content)
 
-    print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-    print(f" 전체 이미지: {len(df)}장")
-    print(f" 시각화 완료: {len(html_cards)}장")
-    print(f" 저장 경로: {output_html}")
-    print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(f"?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
+    print(f" ?�체 ?��?지: {len(df)}??)
+    print(f" ?�각???�료: {len(html_cards)}??)
+    print(f" ?�??경로: {output_html}")
+    print(f"?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
 
 if __name__ == "__main__":
-    # 프로젝트 환경에 맞는 경로 설정
+    # ?�로?�트 ?�경??맞는 경로 ?�정
     CSV_FILE = r'yolo_landmarks_extracted.csv'
     IMG_DIRS = [
-        r'D:\antigravity\semi2_contest\new images_data\images',
-        r'd:\antigravity\semi2_contest\FOR_DA\FOR_DA\YOLO_full_body',
-        r'd:\antigravity\semi2_contest\FOR_DA\FOR_DA\YOLO_ankle_visible'
+        str(config.DATA_DIR / "new_images_data/images"),
+        str(config.DATA_DIR / "FOR_DA/YOLO_full_body"),
+        str(config.DATA_DIR / "FOR_DA/YOLO_ankle_visible")
     ]
     OUTPUT = 'landmark_viewer.html'
     
     generate_viewer(CSV_FILE, IMG_DIRS, OUTPUT)
+
+
