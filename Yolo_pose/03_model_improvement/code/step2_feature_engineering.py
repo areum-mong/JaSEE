@@ -1,8 +1,15 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+try:
+    import config
+except:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+    import config
 # ================================================
-# 프로젝트: 앉은 자세 분류 모델 개발
-# 단계: 3단계 - 모델 성능 개선
-# 설명: 데이터 누수 제거 및 신규 피처 생성
-# 작성일: 2026.05.13
+# ?�로?�트: ?��? ?�세 분류 모델 개발
+# ?�계: 3?�계 - 모델 ?�능 개선
+# ?�명: ?�이???�수 ?�거 �??�규 ?�처 ?�성
+# ?�성?? 2026.05.13
 # ================================================
 import torch
 import torch.nn as nn
@@ -20,8 +27,8 @@ from sklearn.metrics import recall_score, f1_score, roc_auc_score, accuracy_scor
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 # 1. Load Data
-data_dir = r'D:\antigravity\semi2_contest\model_data'
-results_dir = r'D:\antigravity\semi2_contest\model_results'
+data_dir = str(config.DATA_DIR)
+results_dir = str(config.RESULTS_DIR)
 
 df_labels = pd.read_csv(os.path.join(data_dir, 'final_labels_confirmed_merged.csv'))
 df_landmarks = pd.read_csv(os.path.join(data_dir, 'yolo_landmarks_clean_merged.csv'))
@@ -158,12 +165,14 @@ baseline_18 = {
     'Recall': 0.9818, 'F1-Score': 0.9730, 'AUC': 0.9960, 'Accuracy': 0.9750, 'Precision': 0.9643, 'Train/Val Diff': 0.0457
 }
 
-print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-print("피처 제거 전후 성능 비교표 (임계값 0.40)")
-print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print("\n?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
+print("?�처 ?�거 ?�후 ?�능 비교??(?�계�?0.40)")
+print("?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━")
 comp_rows = []
 for m in baseline_18.keys():
     v_old = baseline_18[m]
     v_new = res_new[m]
-    comp_rows.append({'지표': m, '18개(누수포함)': f"{v_old:.4f}", '16개(누수제거)': f"{v_new:.4f}", '변화량': f"{v_new - v_old:+.4f}"})
+    comp_rows.append({'지??: m, '18�??�수?�함)': f"{v_old:.4f}", '16�??�수?�거)': f"{v_new:.4f}", '변?�량': f"{v_new - v_old:+.4f}"})
 print(pd.DataFrame(comp_rows).to_string(index=False))
+
+
